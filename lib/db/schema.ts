@@ -1,3 +1,19 @@
+/**
+ * DATABASE SCHEMA DEFINITIONS
+ * 
+ * This file defines all database tables and their relationships for the SaaS application.
+ * It uses Drizzle ORM to create type-safe database schemas.
+ * 
+ * Key Concepts for Junior Developers:
+ * - pgTable: Creates a PostgreSQL table with specified columns
+ * - serial: Auto-incrementing integer primary key
+ * - varchar: Variable-length string with optional length limit
+ * - text: Unlimited length text field
+ * - timestamp: Date/time field with timezone support
+ * - integer: Standard integer field
+ * - relations: Defines how tables connect to each other (foreign keys)
+ */
+
 import {
   pgTable,
   serial,
@@ -8,6 +24,19 @@ import {
 } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 
+/**
+ * USERS TABLE
+ * Stores user account information including authentication data
+ * 
+ * Fields:
+ * - id: Unique identifier (auto-generated)
+ * - name: User's display name (optional)
+ * - email: Login email (required, unique)
+ * - passwordHash: Encrypted password (never store plain text!)
+ * - role: User permission level (owner, admin, member)
+ * - createdAt/updatedAt: Audit timestamps
+ * - deletedAt: Soft delete timestamp (null = active user)
+ */
 export const users = pgTable('users', {
   id: serial('id').primaryKey(),
   name: varchar('name', { length: 100 }),
@@ -19,6 +48,20 @@ export const users = pgTable('users', {
   deletedAt: timestamp('deleted_at'),
 });
 
+/**
+ * TEAMS TABLE
+ * Represents organizations/companies that can have multiple users
+ * Handles subscription billing through Stripe integration
+ * 
+ * Fields:
+ * - id: Unique team identifier
+ * - name: Team/organization name
+ * - stripeCustomerId: Stripe customer ID for billing
+ * - stripeSubscriptionId: Active subscription ID
+ * - stripeProductId: Which product they're subscribed to
+ * - planName: Human-readable plan name (Base, Plus, etc.)
+ * - subscriptionStatus: active, canceled, past_due, etc.
+ */
 export const teams = pgTable('teams', {
   id: serial('id').primaryKey(),
   name: varchar('name', { length: 100 }).notNull(),
@@ -31,6 +74,17 @@ export const teams = pgTable('teams', {
   subscriptionStatus: varchar('subscription_status', { length: 20 }),
 });
 
+/**
+ * TEAM MEMBERS TABLE (Junction Table)
+ * Links users to teams with specific roles within each team
+ * Many-to-many relationship: Users can belong to multiple teams
+ * 
+ * Fields:
+ * - userId: Foreign key to users table
+ * - teamId: Foreign key to teams table  
+ * - role: User's role within this specific team (owner, admin, member)
+ * - joinedAt: When they joined this team
+ */
 export const teamMembers = pgTable('team_members', {
   id: serial('id').primaryKey(),
   userId: integer('user_id')

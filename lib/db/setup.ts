@@ -1,3 +1,27 @@
+/**
+ * DEVELOPMENT ENVIRONMENT SETUP SCRIPT
+ * 
+ * This interactive script helps developers set up their local development environment
+ * by configuring all necessary services and environment variables.
+ * 
+ * What this script does:
+ * 1. Checks if Stripe CLI is installed and authenticated
+ * 2. Sets up PostgreSQL database (local Docker or remote)
+ * 3. Gets Stripe API keys from user
+ * 4. Creates Stripe webhook for payment processing
+ * 5. Generates secure authentication secret
+ * 6. Creates .env file with all configuration
+ * 
+ * Key Concepts for Junior Developers:
+ * - Environment Variables: Configuration stored outside code
+ * - Docker: Containerization for consistent development environments
+ * - Stripe CLI: Command-line tool for Stripe integration
+ * - Webhooks: Real-time notifications from external services
+ * - Security: Generating secure random secrets for authentication
+ * 
+ * Usage: Run this script once when setting up the project
+ */
+
 import { exec } from 'node:child_process';
 import { promises as fs } from 'node:fs';
 import { promisify } from 'node:util';

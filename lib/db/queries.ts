@@ -1,9 +1,41 @@
+/**
+ * DATABASE QUERY FUNCTIONS
+ * 
+ * This file contains all the database query functions used throughout the application.
+ * It provides a clean API for common database operations and business logic.
+ * 
+ * Key Concepts for Junior Developers:
+ * - Server Actions: Functions that run on the server (not in browser)
+ * - Session Management: How we track logged-in users
+ * - Query Builders: Type-safe database queries using Drizzle ORM
+ * - Error Handling: Proper error handling for database operations
+ * 
+ * Common Query Patterns:
+ * - SELECT: Retrieve data from tables
+ * - JOIN: Combine data from multiple tables
+ * - WHERE: Filter results based on conditions
+ * - ORDER BY: Sort results
+ * - LIMIT: Limit number of results
+ */
+
 import { desc, and, eq, isNull } from 'drizzle-orm';
 import { db } from './drizzle';
 import { activityLogs, teamMembers, teams, users } from './schema';
 import { cookies } from 'next/headers';
 import { verifyToken } from '@/lib/auth/session';
 
+/**
+ * Get the currently authenticated user from session
+ * 
+ * How it works:
+ * 1. Gets session cookie from browser
+ * 2. Verifies the session token is valid
+ * 3. Checks if session hasn't expired
+ * 4. Queries database for user details
+ * 5. Returns user object or null if not authenticated
+ * 
+ * @returns User object or null if not authenticated
+ */
 export async function getUser() {
   const sessionCookie = (await cookies()).get('session');
   if (!sessionCookie || !sessionCookie.value) {
